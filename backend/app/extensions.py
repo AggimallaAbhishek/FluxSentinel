@@ -5,4 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 migrate = Migrate()
-socketio = SocketIO(async_mode="eventlet")
+
+# Python 3.14 is currently incompatible with eventlet; threading mode keeps local dev stable.
+socketio = SocketIO(async_mode="threading")
