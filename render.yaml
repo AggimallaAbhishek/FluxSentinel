@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: fluxsentinel-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: ./scripts/render_build.sh
+    startCommand: python run.py
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.7
+      - key: MODEL_PATH
+        value: app/ml/model.pkl
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
