@@ -32,42 +32,55 @@ def collect_log():
     else:
         parsed_timestamp = datetime.now(timezone.utc)
 
-    log_entry = TrafficLog(
-        ip=payload["ip"],
-        timestamp=parsed_timestamp,
-        endpoint=payload["endpoint"],
-        request_rate=int(payload["request_rate"]),
-        status_code=int(payload["status_code"]),
-        payload_size=int(payload["payload_size"]),
-    )
-
-    db.session.add(log_entry)
-    increment_request_counter(payload["ip"])
-
-    features = extract_features(payload)
-    prediction, probability, severity = predict_threat(features)
-
-    response_payload = {
-        "prediction": int(prediction),
-        "probability": round(probability, 4),
-        "severity": int(severity),
-    }
-
-    if prediction == 1:
-        mitigation = handle_threat(
-            ip=payload["ip"], severity=severity, reason="ml_detected_attack"
+    try:
+        log_entry = TrafficLog(
+            ip=payload["ip"],
+            timestamp=parsed_timestamp,
+            endpoint=payload["endpoint"],
+            request_rate=int(payload["request_rate"]),
+            status_code=int(payload["status_code"]),
+            payload_size=int(payload["payload_size"]),
         )
-        emit_alert(
-            {
-                "type": "threat_alert",
-                "ip": payload["ip"],
-                "severity": severity,
-                "probability": probability,
-                "action": mitigation["action"],
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            }
-        )
-        response_payload["mitigation"] = mitigation
 
-    db.session.commit()
-    return jsonify(response_payload), 201
+        db.session.add(log_entry)
+        increment_request_counter(payload["ip"])
+
+        features = extract_features(payload)
+        prediction, probability, severity = predict_threat(features)
+
+        response_payload = {
+            "prediction": int(prediction),
+            "probability": round(probability, 4),
+            "severity": int(severity),
+        }
+
+        if prediction == 1:
+            mitigation = handle_threat(
+                ip=payload["ip"], severity=severity, reason="ml_detected_attack"
+            )
+            emit_alert(
+                {
+                    "type": "threat_alert",
+                    "ip": payload["ip"],
+                    "severity": severity,
+                    "probability": probability,
+                    "action": mitigation["action"],
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }
+            )
+            response_payload["mitigation"] = mitigation
+
+        db.session.commit()
+        return jsonify(response_payload), 201
+    except Exception as exc:
+        db.session.rollback()
+        return (
+            jsonify(
+                {
+                    "error": "failed_to_process_log",
+                    "detail": exc.__class__.__name__,
+                    "message": str(exc),
+                }
+            ),
+            500,
+        )

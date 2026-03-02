@@ -45,6 +45,10 @@ Required Render environment variables:
 - `MODEL_PATH=app/ml/model.pkl`
 - `CORS_ALLOWED_ORIGINS`
 - `PYTHON_VERSION=3.13.7`
+- `DB_POOL_SIZE=10`
+- `DB_MAX_OVERFLOW=20`
+- `DB_POOL_TIMEOUT=30`
+- `DB_POOL_RECYCLE=300`
 
 
 ## Traffic Simulation
@@ -66,6 +70,18 @@ python tools/simulate_nodes.py \
   --duration-seconds 120 \
   --interval-ms 200 \
   --attack-ratio 0.35
+```
+
+Cloud-safe profile (Render free tier):
+
+```bash
+cd backend
+python tools/simulate_nodes.py \
+  --url https://fluxsentinel-lmhv.onrender.com/api/collect-log \
+  --nodes 2 \
+  --duration-seconds 90 \
+  --interval-ms 1200 \
+  --attack-ratio 0.25
 ```
 
 Use Render backend URL in `--url` for cloud testing.

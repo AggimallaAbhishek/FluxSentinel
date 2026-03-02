@@ -1,0 +1,89 @@
+FluxSentinel - Project Activity Log
+Timezone: Asia/Kolkata (IST, UTC+05:30)
+Log created at: 2026-03-02T22:08:05+05:30
+
+IMPORTANT
+- This log is reconstructed from source-of-truth records available in the repository and runtime artifacts.
+- Exact timestamps are included where available.
+- Sources used: git commit history, Jenkins build metadata, API/runtime outputs shared during setup.
+
+================================================================================
+A) HISTORICAL TIMELINE (FROM START)
+================================================================================
+
+[2026-02-27T18:08:44+05:30] [GIT 3e26afa] created new folders and files in backend and frontend
+[2026-02-27T18:51:03+05:30] [GIT d1ff4c6] created environment variables and other files
+[2026-02-27T19:00:46+05:30] [GIT 7a89156] made changes in the requirement file
+[2026-02-27T19:16:19+05:30] [GIT a19c6a8] made changes in the init files adn source files backend & frontend
+[2026-02-27T19:28:57+05:30] [GIT e444d17] made few changes in the frontend part to get proper values
+[2026-02-27T21:22:50+05:30] [GIT a2a5da5] Fix Render startup for Flask-SocketIO
+[2026-02-27T22:01:35+05:30] [GIT 66c6f97] made changes in the frontend and backend env files
+[2026-02-28T14:22:29+05:30] [GIT 59d49c6] Add Render-safe build config for pip hash issues
+[2026-02-28T14:27:51+05:30] [GIT f7c3bb1] Add Jenkins CI/CD pipeline
+[2026-02-28T14:35:52+05:30] [GIT 0249906] Rename jenkinsfile to Jenkinsfile
+[2026-02-28T14:36:10+05:30] [GIT 7be6fce] Add Jenkins pipeline for Docker image build and deploy
+[2026-03-02T15:39:30+05:30] [GIT 45ccf09] Fix formatting in README description
+[2026-03-02T15:48:51+05:30] [GIT 7f62dce] Fix Jenkins pipeline and Docker CI setup
+[2026-03-02T16:18:15+05:30] [GIT af66553] Add Jenkins-in-Docker setup and Docker CLI fix docs
+[2026-03-02T16:34:46+05:30] [GIT 89e47b6] Fix Jenkins container Docker CLI installation
+[2026-03-02T16:41:04+05:30] [GIT bccd48b] Fix Render pip hash mismatch build
+[2026-03-02T17:51:45+05:30] [GIT 87285e4] Auto-run DB migrations on Render startup and add deep health check
+[2026-03-02T21:33:44+05:30] [GIT 24bb7bc] Add detailed error messages to deep health check
+[2026-03-02T21:48:39+05:30] [GIT 471594b] made chnages in the code to make new stat routes and make multi node traffic stimulator
+
+--------------------------------------------------------------------------------
+Runtime/Integration Milestones
+--------------------------------------------------------------------------------
+[2026-02-27T13:39:00.905905] [API DB Record] mitigation_event id=1 stored (temporary_block, severity=82, ip=1.2.3.4)
+[2026-02-27T13:40:01.812157] [API DB Record] blocked_ip stored (ip=1.2.3.4, reason=ml_detected_attack)
+[2026-02-27T13:40:01.812166] [API DB Record] mitigation_event id=2 stored (temporary_block, severity=82, ip=1.2.3.4)
+
+[2026-03-02T17:16:13.604000+05:30] [JENKINS Build #1] SUCCESS, duration=25.983s
+[2026-03-02T17:25:36.273000+05:30] [JENKINS Build #2] SUCCESS, duration=21.470s
+[2026-03-02T17:40:36.743000+05:30] [JENKINS Build #3] SUCCESS, duration=24.562s
+[2026-03-02T17:53:14.810000+05:30] [JENKINS Build #4] SUCCESS, duration=24.119s
+[2026-03-02T21:34:32.954000+05:30] [JENKINS Build #5] SUCCESS, duration=21.582s
+
+[2026-03-02T22:05:32+05:30] [STATE] Repository checked for timeline backfill.
+[2026-03-02T22:08:05+05:30] [DOC] Created PROJECT_ACTIVITY_LOG.txt and backfilled full historical timeline.
+
+================================================================================
+B) CURRENT STATUS SNAPSHOT
+================================================================================
+
+[2026-03-02T22:08:05+05:30] Current branch: main (tracking origin/main)
+[2026-03-02T22:08:05+05:30] Uncommitted local changes at log creation:
+- README.md
+- backend/tools/simulate_nodes.py
+
+Known active platform status (latest verified):
+- GitHub -> Jenkins -> Docker Hub -> Render deploy hook: WORKING (green Jenkins pipeline)
+- Render backend base health endpoint /api/health: WORKING
+- Render Redis connectivity: WORKING
+- Render database connectivity: NOT WORKING at time of verification (OperationalError on deep health)
+
+================================================================================
+C) FORWARD LOGGING POLICY (FROM NOW ON)
+================================================================================
+
+From this point forward, every meaningful project action should be appended here with exact timestamp.
+
+Entry format to use:
+[YYYY-MM-DDTHH:MM:SS+05:30] [AREA] [TYPE] Description
+
+Examples:
+[2026-03-03T10:12:00+05:30] [BACKEND] [CODE] Added endpoint /api/stats/xyz
+[2026-03-03T10:20:00+05:30] [DEPLOY] [RENDER] Updated start command to ...
+[2026-03-03T10:28:00+05:30] [VERIFY] [API] GET /api/health returned 200
+
+================================================================================
+D) LIVE APPEND SECTION (ONGOING)
+================================================================================
+
+[2026-03-02T22:08:05+05:30] [DOC] Forward logging enabled. Future steps will be appended in this file.
+
+[2026-03-02T22:09:10+05:30] [DOC] Added historical backfill + forward logging policy per user request.
+[2026-03-02T22:11:12+05:30] [VERIFY] [SIMULATOR] Cloud simulation to Render backend executed with certifi and with --insecure; both runs failed fast due to repeated HTTP 500 responses from /api/collect-log.
+[2026-03-02T22:14:29+05:30] [DEBUG] [RENDER_DB] Deep health check returned OperationalError: DATABASE_URL host is still placeholder (your-rds-endpoint.amazonaws.com). Action required: update Render DATABASE_URL to actual RDS endpoint.
+[2026-03-02T22:19:06+05:30] [VERIFY] [RENDER_DB] Recheck of /api/health/deep still shows placeholder host (your-rds-endpoint.amazonaws.com). DATABASE_URL update not yet applied in active Render service.
+[2026-03-02T22:30:12+05:30] [BACKEND] [FIX] Added configurable SQLAlchemy pool settings (DB_POOL_*), added rollback+JSON error handling in /api/collect-log, updated env template/docs, and validated tests (6 passed).
