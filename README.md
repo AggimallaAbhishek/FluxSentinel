@@ -59,16 +59,19 @@ Create these credentials in Jenkins:
 4. Branch: `main`
 5. Script Path: `Jenkinsfile`
 
-### Docker Access Fix for Jenkins Host
-If Jenkins cannot talk to Docker daemon, run on Jenkins host:
+If your stage view still shows old stages (for example `docker buildx ...`), the job is still using an old inline script. Switch to `Pipeline script from SCM`.
 
-```bash
-sudo usermod -aG docker jenkins
-sudo systemctl restart docker
-sudo systemctl restart jenkins
-```
+### Jenkins-in-Docker Setup (Fix for `docker: not found`)
+Use this when Jenkins itself is running as a Docker container on your laptop.
 
-If using macOS agent, ensure Docker Desktop is running and Jenkins user/session has Docker CLI access.
+1. From repo root: `cd infra/jenkins`
+2. Start Jenkins with Docker CLI installed:
+   - `docker compose up -d --build`
+3. Open Jenkins: `http://localhost:8080`
+4. In Jenkins, run this to verify Docker is available:
+   - `docker version`
+
+This setup mounts host Docker socket (`/var/run/docker.sock`) and includes Docker CLI in Jenkins container, so pipeline `docker build/push` commands work.
 
 ### First Pipeline Run
 - Run once with `TRIGGER_RENDER_DEPLOY=false`
