@@ -4,7 +4,7 @@ services:
     runtime: python
     rootDir: backend
     buildCommand: bash ./scripts/render_build.sh
-    startCommand: python run.py
+    startCommand: bash ./scripts/render_start.sh
     healthCheckPath: /api/health
     envVars:
       - key: PYTHON_VERSION

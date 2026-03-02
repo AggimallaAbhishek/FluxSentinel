@@ -23,8 +23,16 @@ If Render build fails with hash mismatch errors from pip, use the repository bui
 
 - Root directory: `backend`
 - Build command: `./scripts/render_build.sh`
-- Start command: `python run.py`
+- Start command: `bash ./scripts/render_start.sh`
 - Health check path: `/api/health`
+
+For existing Render services (non-blueprint), set these in Render Dashboard -> Service -> Settings -> Build & Deploy:
+- Root Directory: `backend`
+- Build Command: `bash ./scripts/render_build.sh`
+- Start Command: `bash ./scripts/render_start.sh`
+
+After deploy, verify deep health:
+- `GET /api/health/deep` (checks DB + Redis)
 
 This script explicitly sets:
 - `PIP_REQUIRE_HASHES=0`
