@@ -1,6 +1,6 @@
 # FluxSentinel
 
-AI-powered distributed threat detection and autonomous self-healing network system.
+AI-powered distributed threat detection & autonomous self-healing network system.
 
 ## Structure
 - `backend/`: Flask API, ML inference, mitigation engine, Redis integration, Docker setup.
