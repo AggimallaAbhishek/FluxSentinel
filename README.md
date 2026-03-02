@@ -46,6 +46,30 @@ Required Render environment variables:
 - `CORS_ALLOWED_ORIGINS`
 - `PYTHON_VERSION=3.13.7`
 
+
+## Traffic Simulation
+
+Run distributed simulator nodes against backend collect endpoint:
+
+```bash
+cd backend
+python tools/simulate_nodes.py \
+  --url http://localhost:5000/api/collect-log \
+  --nodes 8 \
+  --duration-seconds 120 \
+  --interval-ms 200 \
+  --attack-ratio 0.35
+```
+
+Use Render backend URL in `--url` for cloud testing.
+
+## Analytics API
+
+New analytics endpoints:
+- `GET /api/stats/overview?minutes=60`
+- `GET /api/stats/timeline?minutes=60&bucket_minutes=5`
+- `GET /api/stats/top-ips?minutes=60&limit=10`
+
 ## Jenkins + Docker CI/CD
 
 ### Jenkins Pipeline

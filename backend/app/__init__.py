@@ -6,6 +6,7 @@ from .extensions import db, migrate, socketio
 from .routes.health import health_bp
 from .routes.logs import logs_bp
 from .routes.mitigation import mitigation_bp
+from .routes.stats import stats_bp
 
 
 def create_app(config_class=Config) -> Flask:
@@ -24,5 +25,6 @@ def create_app(config_class=Config) -> Flask:
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(logs_bp, url_prefix="/api")
     app.register_blueprint(mitigation_bp, url_prefix="/api")
+    app.register_blueprint(stats_bp, url_prefix="/api")
 
     return app
