@@ -49,7 +49,14 @@ Required Render environment variables:
 
 ## Traffic Simulation
 
-Run distributed simulator nodes against backend collect endpoint:
+Start backend first, then run distributed simulator nodes:
+
+```bash
+cd backend
+python run.py
+```
+
+In another terminal:
 
 ```bash
 cd backend
@@ -62,6 +69,9 @@ python tools/simulate_nodes.py \
 ```
 
 Use Render backend URL in `--url` for cloud testing.
+The simulator now runs a preflight `/api/health` check and fails fast when the endpoint is unreachable.
+If you see macOS SSL certificate verification errors, either install `certifi` in the backend venv
+or run simulator with `--insecure` for testing only.
 
 ## Analytics API
 
