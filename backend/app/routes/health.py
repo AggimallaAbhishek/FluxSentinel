@@ -9,6 +9,18 @@ import redis
 health_bp = Blueprint("health", __name__)
 
 
+def _format_exc(exc: Exception) -> dict:
+    # Keep error details short for debugging in non-sensitive environments.
+    message = str(exc)
+    if len(message) > 240:
+        message = f"{message[:240]}..."
+    return {
+        "status": "error",
+        "error": exc.__class__.__name__,
+        "message": message,
+    }
+
+
 @health_bp.get("/health")
 def health_check():
     return jsonify({"status": "ok", "service": "FluxSentinel"}), 200
@@ -25,10 +37,7 @@ def deep_health_check():
     except Exception as exc:
         db.session.rollback()
         overall_status = "degraded"
-        checks["database"] = {
-            "status": "error",
-            "error": exc.__class__.__name__,
-        }
+        checks["database"] = _format_exc(exc)
 
     try:
         redis.Redis.from_url(
@@ -37,10 +46,7 @@ def deep_health_check():
         checks["redis"] = {"status": "ok"}
     except Exception as exc:
         overall_status = "degraded"
-        checks["redis"] = {
-            "status": "error",
-            "error": exc.__class__.__name__,
-        }
+        checks["redis"] = _format_exc(exc)
 
     status_code = 200 if overall_status == "ok" else 503
     return (
