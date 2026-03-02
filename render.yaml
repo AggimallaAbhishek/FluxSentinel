@@ -3,7 +3,7 @@ services:
     name: fluxsentinel-backend
     runtime: python
     rootDir: backend
-    buildCommand: ./scripts/render_build.sh
+    buildCommand: bash ./scripts/render_build.sh
     startCommand: python run.py
     healthCheckPath: /api/health
     envVars:
@@ -11,6 +11,10 @@ services:
         value: 3.13.7
       - key: MODEL_PATH
         value: app/ml/model.pkl
+      - key: PIP_REQUIRE_HASHES
+        value: "0"
+      - key: PIP_CONFIG_FILE
+        value: /dev/null
       - key: DATABASE_URL
         sync: false
       - key: REDIS_URL
