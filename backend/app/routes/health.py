@@ -10,15 +10,15 @@ health_bp = Blueprint("health", __name__)
 
 
 def _format_exc(exc: Exception) -> dict:
-    # Keep error details short for debugging in non-sensitive environments.
-    message = str(exc)
-    if len(message) > 240:
-        message = f"{message[:240]}..."
-    return {
-        "status": "error",
-        "error": exc.__class__.__name__,
-        "message": message,
-    }
+    payload = {"status": "error", "error": "check_failed"}
+    if current_app.config.get("EXPOSE_INTERNAL_ERRORS", False):
+        # Keep error details short for debugging in non-sensitive environments.
+        message = str(exc)
+        if len(message) > 240:
+            message = f"{message[:240]}..."
+        payload["error"] = exc.__class__.__name__
+        payload["message"] = message
+    return payload
 
 
 @health_bp.get("/health")

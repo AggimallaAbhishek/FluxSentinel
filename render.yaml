@@ -10,7 +10,9 @@ services:
       - key: PYTHON_VERSION
         value: 3.13.7
       - key: MODEL_PATH
-        value: app/ml/model.pkl
+        value: ml/model.pkl
+      - key: EXPOSE_INTERNAL_ERRORS
+        value: "false"
       - key: PIP_REQUIRE_HASHES
         value: "0"
       - key: PIP_CONFIG_FILE

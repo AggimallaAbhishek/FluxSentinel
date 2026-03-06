@@ -13,23 +13,49 @@ FEATURE_ORDER = [
     "payload_size_anomaly",
 ]
 _MODEL = None
+_MODEL_SOURCE = None
+
+
+def _resolve_model_path(raw_model_path: str) -> Path:
+    configured_path = Path(raw_model_path)
+    if configured_path.is_absolute():
+        return configured_path
+
+    app_root = Path(current_app.root_path)
+    candidates = [
+        app_root / configured_path,
+        app_root.parent / configured_path,
+    ]
+
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    return candidates[0]
 
 
 def _load_model() -> Optional[object]:
-    global _MODEL
+    global _MODEL, _MODEL_SOURCE
 
-    if _MODEL is not None:
+    model_path = _resolve_model_path(current_app.config["MODEL_PATH"])
+    model_key = str(model_path.resolve()) if model_path.exists() else str(model_path)
+
+    if _MODEL is not None and _MODEL_SOURCE == model_key:
         return _MODEL
-
-    model_path = Path(current_app.config["MODEL_PATH"])
-    if not model_path.is_absolute():
-        model_path = Path(current_app.root_path) / model_path
 
     if not model_path.exists():
         return None
 
-    with model_path.open("rb") as f:
-        _MODEL = pickle.load(f)
+    try:
+        with model_path.open("rb") as f:
+            _MODEL = pickle.load(f)
+            _MODEL_SOURCE = model_key
+    except Exception:
+        current_app.logger.exception("Failed to load threat model from %s", model_path)
+        _MODEL = None
+        _MODEL_SOURCE = None
+        return None
+
     return _MODEL
 
 

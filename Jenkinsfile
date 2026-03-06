@@ -7,16 +7,27 @@ pipeline {
   }
 
   parameters {
-    booleanParam(name: 'TRIGGER_RENDER_DEPLOY', defaultValue: false, description: 'Trigger Render deploy hook after pushing Docker image')
+    booleanParam(
+      name: 'PUSH_DOCKER_IMAGE',
+      defaultValue: false,
+      description: 'Push built backend image to Docker Hub (Render service currently deploys from source).'
+    )
+    booleanParam(
+      name: 'TRIGGER_RENDER_DEPLOY',
+      defaultValue: true,
+      description: 'Trigger Render deploy hook after tests pass.'
+    )
   }
 
   environment {
     IMAGE_REPO = 'docker.io/aggimallaabhishek/fluxsentinel-backend'
     IMAGE_TAG = "${BUILD_NUMBER}"
+    IMAGE_LATEST = "${IMAGE_REPO}:latest"
+    IMAGE_VERSION = "${IMAGE_REPO}:${IMAGE_TAG}"
   }
 
   stages {
-    stage('Checkout') {
+    stage('Checkout SCM') {
       steps {
         checkout scm
       }
@@ -30,23 +41,30 @@ pipeline {
 
     stage('Build Backend Image') {
       steps {
-        sh 'docker build -t ${IMAGE_REPO}:${IMAGE_TAG} -t ${IMAGE_REPO}:latest ./backend'
+        sh 'docker build --platform linux/amd64 -t ${IMAGE_VERSION} -t ${IMAGE_LATEST} ./backend'
       }
     }
 
     stage('Run Backend Tests In Container') {
       steps {
-        sh 'docker run --rm ${IMAGE_REPO}:${IMAGE_TAG} pytest -q'
+        sh 'docker run --rm ${IMAGE_VERSION} pytest -q'
       }
     }
 
     stage('Push Docker Image') {
+      when {
+        expression { return params.PUSH_DOCKER_IMAGE }
+      }
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+        withCredentials([usernamePassword(
+          credentialsId: 'dockerhub-creds',
+          usernameVariable: 'DOCKER_USER',
+          passwordVariable: 'DOCKER_PASS'
+        )]) {
           sh '''
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            docker push ${IMAGE_REPO}:${IMAGE_TAG}
-            docker push ${IMAGE_REPO}:latest
+            docker push ${IMAGE_VERSION}
+            docker push ${IMAGE_LATEST}
           '''
         }
       }
@@ -57,7 +75,10 @@ pipeline {
         expression { return params.TRIGGER_RENDER_DEPLOY }
       }
       steps {
-        withCredentials([string(credentialsId: 'render-deploy-hook', variable: 'RENDER_DEPLOY_HOOK_URL')]) {
+        withCredentials([string(
+          credentialsId: 'render-deploy-hook',
+          variable: 'RENDER_DEPLOY_HOOK_URL'
+        )]) {
           sh 'curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"'
         }
       }

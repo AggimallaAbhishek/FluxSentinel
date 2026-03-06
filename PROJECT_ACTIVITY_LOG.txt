@@ -87,3 +87,14 @@ D) LIVE APPEND SECTION (ONGOING)
 [2026-03-02T22:14:29+05:30] [DEBUG] [RENDER_DB] Deep health check returned OperationalError: DATABASE_URL host is still placeholder (your-rds-endpoint.amazonaws.com). Action required: update Render DATABASE_URL to actual RDS endpoint.
 [2026-03-02T22:19:06+05:30] [VERIFY] [RENDER_DB] Recheck of /api/health/deep still shows placeholder host (your-rds-endpoint.amazonaws.com). DATABASE_URL update not yet applied in active Render service.
 [2026-03-02T22:30:12+05:30] [BACKEND] [FIX] Added configurable SQLAlchemy pool settings (DB_POOL_*), added rollback+JSON error handling in /api/collect-log, updated env template/docs, and validated tests (6 passed).
+[2026-03-02T22:46:13+05:30] [DEBUG] [RENDER_DB] Deep health now resolves real RDS host but DB connect times out (network path blocked to 13.53.55.119:5432). Next action: fix AWS RDS public/network security rules.
+[2026-03-06T15:06:07+05:30] [AUDIT] [CODEBASE] Performed full repository audit: backend tests passed (6/6), frontend production build passed, and deployment/config files reviewed for missing links.
+[2026-03-06T15:06:07+05:30] [AUDIT] [FINDING] Confirmed MODEL_PATH resolution bug: default/env value app/ml/model.pkl resolves to backend/app/app/ml/model.pkl, so XGBoost model is not loaded and heuristic fallback is used.
+[2026-03-06T15:06:07+05:30] [AUDIT] [FINDING] Local backend .env is missing DATABASE_URL key; local app falls back to SQLite unless DATABASE_URL is explicitly set.
+[2026-03-06T15:06:07+05:30] [AUDIT] [FINDING] Jenkinsfile in working tree currently differs from stable pipeline shape (tests/deploy gating removed), creating config drift risk.
+[2026-03-06T15:06:07+05:30] [VERIFY] [LIVE_CHECK] Direct curl probes to Render endpoint from this environment timed out (no response within 20-90s), so live status was inferred from prior deep health evidence and local static checks.
+[2026-03-06T15:16:05+05:30] [BACKEND] [FIX] Fixed model loading path handling with robust resolver + cache keying; default MODEL_PATH updated to ml/model.pkl and templates/render config aligned.
+[2026-03-06T15:16:05+05:30] [BACKEND] [FIX] Enforced Redis blacklist at ingest path: /api/collect-log now returns 429 for blocked IPs with retry_after_seconds when available.
+[2026-03-06T15:16:05+05:30] [BACKEND] [SECURITY] Hardened error handling: /api/collect-log and /api/health/deep now hide internal exception details by default (EXPOSE_INTERNAL_ERRORS=false).
+[2026-03-06T15:16:05+05:30] [CI_CD] [ALIGNMENT] Reworked Jenkinsfile to align with Render source deploy flow: build/test container always, Docker Hub push optional, Render deploy hook controlled by parameter.
+[2026-03-06T15:16:05+05:30] [VERIFY] [TEST] Backend tests passed after fixes (8 passed); frontend production build passed.

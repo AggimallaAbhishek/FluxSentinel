@@ -42,8 +42,9 @@ Required Render environment variables:
 - `DATABASE_URL`
 - `REDIS_URL`
 - `SECRET_KEY`
-- `MODEL_PATH=app/ml/model.pkl`
+- `MODEL_PATH=ml/model.pkl`
 - `CORS_ALLOWED_ORIGINS`
+- `EXPOSE_INTERNAL_ERRORS=false`
 - `PYTHON_VERSION=3.13.7`
 - `DB_POOL_SIZE=10`
 - `DB_MAX_OVERFLOW=20`
@@ -132,5 +133,5 @@ Use this when Jenkins itself is running as a Docker container on your laptop.
 This setup mounts host Docker socket (`/var/run/docker.sock`) and includes Docker CLI in Jenkins container, so pipeline `docker build/push` commands work.
 
 ### First Pipeline Run
-- Run once with `TRIGGER_RENDER_DEPLOY=false`
-- After Docker push is confirmed, run again with `TRIGGER_RENDER_DEPLOY=true`
+- Keep `TRIGGER_RENDER_DEPLOY=true` so Jenkins triggers Render source deploy after tests.
+- Use `PUSH_DOCKER_IMAGE=true` only when you also want Docker Hub image artifacts.

@@ -71,3 +71,24 @@ def is_ip_blacklisted(ip: str) -> bool:
             _fallback_blacklist.pop(key, None)
             return False
         return True
+
+
+def get_blacklist_ttl(ip: str) -> int | None:
+    key = f"blacklist:{ip}"
+
+    try:
+        ttl = int(_get_client().ttl(key))
+        # Redis TTL semantics:
+        # -2 key does not exist, -1 key exists with no expiry.
+        if ttl <= 0:
+            return None
+        return ttl
+    except redis.RedisError:
+        expires_at = _fallback_blacklist.get(key)
+        if expires_at is None:
+            return None
+        remaining = int(expires_at - _now())
+        if remaining <= 0:
+            _fallback_blacklist.pop(key, None)
+            return None
+        return remaining

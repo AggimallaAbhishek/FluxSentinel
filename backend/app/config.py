@@ -11,6 +11,18 @@ def _env_int(name: str, default: int) -> int:
         return default
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    normalized = raw.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    return default
+
+
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///fluxsentinel.db")
@@ -26,5 +38,6 @@ class Config:
     }
 
     REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-    MODEL_PATH = os.getenv("MODEL_PATH", "app/ml/model.pkl")
+    MODEL_PATH = os.getenv("MODEL_PATH", "ml/model.pkl")
     CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "*")
+    EXPOSE_INTERNAL_ERRORS = _env_bool("EXPOSE_INTERNAL_ERRORS", False)

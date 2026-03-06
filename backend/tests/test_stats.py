@@ -13,7 +13,7 @@ class TestConfig:
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     REDIS_URL = "redis://localhost:6379/0"
-    MODEL_PATH = "app/ml/model.pkl"
+    MODEL_PATH = "ml/model.pkl"
     CORS_ALLOWED_ORIGINS = "*"
 
 
